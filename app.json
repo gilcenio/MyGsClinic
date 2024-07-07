@@ -21,7 +21,14 @@
       }
     },
     "web": {
-      "favicon": "./assets/favicon.png"
-    }
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "router": {
+      "type": "basic"
+    },
+    "plugins": [
+      "expo-font"
+    ]
   }
 }
