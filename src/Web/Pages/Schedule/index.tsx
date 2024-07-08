@@ -9,6 +9,7 @@ import ListEmptyComponent from '../../Components/ListEmptyComponent';
 import SelectApp from '../../Components/SelectApp';
 import ButtonApp from '../../Components/ButtonApp';
 import { useAuth } from '../../Hooks';
+import { formatDate } from '../../Functions';
 
 export interface IDATA{
   date: string,
@@ -32,9 +33,9 @@ const DATA: IDATA[] = [
     date: "2024-06-16",
     data: [{
       "date": "2024-06-16",
-      "dateStart": "08:10",
+      "dateStart": "16/06/2024",
       "hourStart": "17:07",
-      "dateFinal": "08:11",
+      "dateFinal": "16/06/2024",
       "hourFinal": "17:13",
       "isAllday": false,
       "frequency": "Não ses repete",
@@ -49,9 +50,9 @@ const DATA: IDATA[] = [
     data: [
       {    
         "date": "2024-06-17",
-        "dateStart": "08:00",
+        "dateStart": "16/06/2024",
         "hourStart": "17:00",
-        "dateFinal": "08:00",
+        "dateFinal": "16/06/2024",
         "hourFinal": "17:00",
         "isAllday": false,
         "frequency": "Não se repete",
@@ -62,9 +63,9 @@ const DATA: IDATA[] = [
       },
       {    
         "date": "2024-06-17",
-        "dateStart": "08:00",
+        "dateStart": "16/06/2024",
         "hourStart": "17:00",
-        "dateFinal": "08:00",
+        "dateFinal": "16/06/2024",
         "hourFinal": "17:00",
         "isAllday": false,
         "frequency": "Não se repete",
@@ -75,9 +76,9 @@ const DATA: IDATA[] = [
       },
       {    
         "date": "2024-06-17",
-        "dateStart": "08:00",
+        "dateStart": "16/06/2024",
         "hourStart": "17:00",
-        "dateFinal": "08:00",
+        "dateFinal": "16/06/2024",
         "hourFinal": "17:00",
         "isAllday": false,
         "frequency": "Não se repete",
@@ -93,9 +94,9 @@ const DATA: IDATA[] = [
     data: [
       {    
         "date": "2024-06-18",
-        "dateStart": "08:00",
+        "dateStart": "16/06/2024",
         "hourStart": "17:00",
-        "dateFinal": "08:00",
+        "dateFinal": "16/06/2024",
         "hourFinal": "17:00",
         "isAllday": false,
         "frequency": "Não se repete",
@@ -106,9 +107,9 @@ const DATA: IDATA[] = [
       },
       {    
         "date": "2024-06-18",
-        "dateStart": "08:00",
+        "dateStart": "16/06/2024",
         "hourStart": "17:00",
-        "dateFinal": "08:00",
+        "dateFinal": "16/06/2024",
         "hourFinal": "17:00",
         "isAllday": false,
         "frequency": "Não se repete",
@@ -119,9 +120,9 @@ const DATA: IDATA[] = [
       },
       {    
         "date": "2024-06-18",
-        "dateStart": "08:00",
+        "dateStart": "16/06/2024",
         "hourStart": "17:00",
-        "dateFinal": "08:00",
+        "dateFinal": "16/06/2024",
         "hourFinal": "17:00",
         "isAllday": false,
         "frequency": "Não se repete",
@@ -135,9 +136,9 @@ const DATA: IDATA[] = [
   {
     date: "2024-06-19",
     data: [{"date": "2024-06-19",
-      "dateStart": "08:00",
+      "dateStart": "16/06/2024",
       "hourStart": "17:00",
-      "dateFinal": "08:00",
+      "dateFinal": "16/06/2024",
       "hourFinal": "17:00",
       "isAllday": false,
       "frequency": "Não se repete",
@@ -149,9 +150,9 @@ const DATA: IDATA[] = [
   {
     date: "2024-06-20",
     data: [{"date": "2024-06-20",
-      "dateStart": "08:00",
+      "dateStart": "16/06/2024",
       "hourStart": "17:00",
-      "dateFinal": "08:00",
+      "dateFinal": "16/06/2024",
       "hourFinal": "17:00",
       "isAllday": false,
       "frequency": "Não se repete",
@@ -163,9 +164,9 @@ const DATA: IDATA[] = [
   {
     date: "2024-06-21",
     data: [{"date": "2024-06-21",
-      "dateStart": "08:00",
+      "dateStart": "16/06/2024",
       "hourStart": "17:00",
-      "dateFinal": "08:00",
+      "dateFinal": "16/06/2024",
       "hourFinal": "17:00",
       "isAllday": false,
       "frequency": "Não se repete",
@@ -177,9 +178,9 @@ const DATA: IDATA[] = [
   {
     date: "2024-06-22",
     data: [{"date": "2024-06-22",
-      "dateStart": "08:00",
+      "dateStart": "16/06/2024",
       "hourStart": "17:00",
-      "dateFinal": "08:00",
+      "dateFinal": "16/06/2024",
       "hourFinal": "17:00",
       "isAllday": false,
       "frequency": "Não se repete",
@@ -191,9 +192,9 @@ const DATA: IDATA[] = [
   {
     date: "2024-06-23",
     data: [{"date": "2024-06-23",
-      "dateStart": "08:00",
+      "dateStart": "16/06/2024",
       "hourStart": "17:00",
-      "dateFinal": "08:00",
+      "dateFinal": "16/06/2024",
       "hourFinal": "17:00",
       "isAllday": false,
       "frequency": "Não se repete",
@@ -205,9 +206,9 @@ const DATA: IDATA[] = [
   {
     date: "2024-06-24",
     data: [{"date": "2024-06-24",
-      "dateStart": "08:00",
+      "dateStart": "16/06/2024",
       "hourStart": "17:00",
-      "dateFinal": "08:00",
+      "dateFinal": "16/06/2024",
       "hourFinal": "17:00",
       "isAllday": false,
       "frequency": "Não se repete",
@@ -219,9 +220,9 @@ const DATA: IDATA[] = [
   {
     date: "2024-06-25",
     data: [{"date": "2024-06-25",
-      "dateStart": "08:00",
+      "dateStart": "16/06/2024",
       "hourStart": "17:00",
-      "dateFinal": "08:00",
+      "dateFinal": "16/06/2024",
       "hourFinal": "17:00",
       "isAllday": false,
       "frequency": "Não se repete",
@@ -233,9 +234,9 @@ const DATA: IDATA[] = [
   {
     date: "2024-06-26",
     data: [{"date": "2024-06-26",
-      "dateStart": "08:00",
+      "dateStart": "16/06/2024",
       "hourStart": "17:00",
-      "dateFinal": "08:00",
+      "dateFinal": "16/06/2024",
       "hourFinal": "17:00",
       "isAllday": false,
       "frequency": "Não se repete",
@@ -247,9 +248,9 @@ const DATA: IDATA[] = [
   {
     date: "2024-06-27",
     data: [{"date": "2024-06-27",
-      "dateStart": "08:00",
+      "dateStart": "16/06/2024",
       "hourStart": "17:00",
-      "dateFinal": "08:00",
+      "dateFinal": "16/06/2024",
       "hourFinal": "17:00",
       "isAllday": false,
       "frequency": "Não se repete",
@@ -261,9 +262,9 @@ const DATA: IDATA[] = [
   {
     date: "2024-06-28",
     data: [{"date": "2024-06-28",
-      "dateStart": "08:00",
+      "dateStart": "16/06/2024",
       "hourStart": "17:00",
-      "dateFinal": "08:00",
+      "dateFinal": "16/06/2024",
       "hourFinal": "17:00",
       "isAllday": false,
       "frequency": "Não se repete",
@@ -275,9 +276,9 @@ const DATA: IDATA[] = [
   {
     date: "2024-06-29",
     data: [{"date": "2024-06-29",
-      "dateStart": "08:00",
+      "dateStart": "16/06/2024",
       "hourStart": "17:00",
-      "dateFinal": "08:00",
+      "dateFinal": "16/06/2024",
       "hourFinal": "17:00",
       "isAllday": false,
       "frequency": "Não se repete",
@@ -289,9 +290,9 @@ const DATA: IDATA[] = [
   {
     date: "2024-06-30",
     data: [{"date": "2024-06-30",
-      "dateStart": "08:00",
+      "dateStart": "16/06/2024",
       "hourStart": "17:00",
-      "dateFinal": "08:00",
+      "dateFinal": "16/06/2024",
       "hourFinal": "17:00",
       "isAllday": false,
       "frequency": "Não se repete",
@@ -303,9 +304,9 @@ const DATA: IDATA[] = [
   {
     date: "2024-07-01",
     data: [{"date": "2024-07-01",
-      "dateStart": "08:00",
+      "dateStart": "16/06/2024",
       "hourStart": "17:00",
-      "dateFinal": "08:00",
+      "dateFinal": "16/06/2024",
       "hourFinal": "17:00",
       "isAllday": false,
       "frequency": "Não se repete",
@@ -317,9 +318,9 @@ const DATA: IDATA[] = [
   {
     date: "2024-07-02",
     data: [{"date": "2024-07-02",
-      "dateStart": "08:00",
+      "dateStart": "16/06/2024",
       "hourStart": "17:00",
-      "dateFinal": "08:00",
+      "dateFinal": "16/06/2024",
       "hourFinal": "17:00",
       "isAllday": false,
       "frequency": "Não se repete",
@@ -331,9 +332,9 @@ const DATA: IDATA[] = [
   {
     date: "2024-07-03",
     data: [{"date": "2024-07-03",
-      "dateStart": "08:00",
+      "dateStart": "16/06/2024",
       "hourStart": "17:00",
-      "dateFinal": "08:00",
+      "dateFinal": "16/06/2024",
       "hourFinal": "17:00",
       "isAllday": false,
       "frequency": "Não se repete",
@@ -345,9 +346,9 @@ const DATA: IDATA[] = [
   {
     date: "2024-07-04",
     data: [{"date": "2024-07-04",
-      "dateStart": "08:00",
+      "dateStart": "16/06/2024",
       "hourStart": "17:00",
-      "dateFinal": "08:00",
+      "dateFinal": "16/06/2024",
       "hourFinal": "17:00",
       "isAllday": false,
       "frequency": "Não se repete",
@@ -359,9 +360,9 @@ const DATA: IDATA[] = [
   {
     date: "2024-07-06",
     data: [{"date": "2024-07-06",
-      "dateStart": "08:00",
+      "dateStart": "16/06/2024",
       "hourStart": "17:00",
-      "dateFinal": "08:00",
+      "dateFinal": "16/06/2024",
       "hourFinal": "17:00",
       "isAllday": false,
       "frequency": "Não se repete",
@@ -373,9 +374,9 @@ const DATA: IDATA[] = [
   {
     date: "2024-07-07",
     data: [{"date": "2024-07-07",
-      "dateStart": "08:00",
+      "dateStart": "16/06/2024",
       "hourStart": "17:00",
-      "dateFinal": "08:00",
+      "dateFinal": "16/06/2024",
       "hourFinal": "17:00",
       "isAllday": false,
       "frequency": "Não se repete",
@@ -387,9 +388,9 @@ const DATA: IDATA[] = [
   {
     date: "2024-07-08",
     data: [{"date": "2024-07-08",
-      "dateStart": "08:00",
+      "dateStart": "16/06/2024",
       "hourStart": "17:00",
-      "dateFinal": "08:00",
+      "dateFinal": "16/06/2024",
       "hourFinal": "17:00",
       "isAllday": false,
       "frequency": "Não se repete",
@@ -401,23 +402,23 @@ const DATA: IDATA[] = [
   {
     date: "2024-07-09",
     data: [{"date": "2024-07-09",
-      "dateStart": "08:00",
+      "dateStart": "16/06/2024",
       "hourStart": "17:00",
-      "dateFinal": "08:00",
+      "dateFinal": "16/06/2024",
       "hourFinal": "17:00",
       "isAllday": false,
       "frequency": "Não se repete",
       "nameProfessional": "Marcos",
       "namePatient": "Pedro",
       "cor": theme.colorFolders.color_1,
-      "notes": ""}]
+      "notes": "jhgj dafgdi fasi dflas fdpf aspdas fas dpd fasp fpas ff adspf asd fásd fásd f8asd´f asd´f as"}]
   },
   {
     date: "2024-07-10",
     data: [{"date": "2024-07-10",
-      "dateStart": "08:00",
+      "dateStart": "16/06/2024",
       "hourStart": "17:00",
-      "dateFinal": "08:00",
+      "dateFinal": "16/06/2024",
       "hourFinal": "17:00",
       "isAllday": false,
       "frequency": "Não se repete",
@@ -574,11 +575,6 @@ export default function Schedule() {
     scroll()
   }, []);
   
-  const formatDate = (dateString) => {
-    const [year, month, day] = dateString.split('-');
-    return `${day}/${month}/${year}`;
-  };
-
   const handleSelectWeek = () => {
     const { startOfWeek, endOfWeek } = getStartAndEndDatesOfCurrentWeekInCurrentMonth();
 

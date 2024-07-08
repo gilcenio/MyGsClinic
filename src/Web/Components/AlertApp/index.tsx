@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TextInput, ScrollView } from 'react-native'
+import { View, Text, StyleSheet, TextInput, ScrollView, Switch, Pressable, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import theme from '../../../Global/theme';
 import { Ionicons } from '@expo/vector-icons';
@@ -9,13 +9,15 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { responsiveWidth } from '../../../Utils/responsive';
 import ButtonApp from '../ButtonApp';
+import DatePicker from 'react-datepicker';
+import "react-datepicker/dist/react-datepicker.css";
+import './custom-datepicker.css'
+import { DATACOLOR, FREQUENCY } from '../../Consts';
 
 interface IData{
   title: string,
   dateStart: string
-  hourStart: string
   dateFinal: string
-  hourFinal: string
   isAllday: string
   frequency: string
   nameProfessional: string
@@ -27,9 +29,7 @@ interface IData{
 const validationSchema = yup.object().shape({
   title: yup.string().required('Campo obrigatório'),
   dateStart: yup.string().required('Campo obrigatório'),
-  hourStart: yup.string().required('Campo obrigatório'),
   dateFinal: yup.string().required('Campo obrigatório'),
-  hourFinal: yup.string().required('Campo obrigatório'),
   isAllday: yup.string(),
   frequency: yup.string(),
   nameProfessional: yup.string().required('Campo obrigatório'),
@@ -42,7 +42,11 @@ const AlertApp = ({visible}) => {
   const {hideAlert} = useAuth()
   const [show, setShow] = useState(false);
   const { control, handleSubmit, formState: { errors }} = useForm({resolver: yupResolver(validationSchema),});
-
+  const [startDate, setStartDate] = useState(new Date());
+  const [isEnabled, setIsEnabled] = useState(false);
+  const [colorIndex, setColorIndex] = useState(0);
+  const [frequencyIndex, setFrequencyIndex] = useState(0);
+  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
   useEffect(() => {
     if (visible) {
@@ -58,6 +62,7 @@ const AlertApp = ({visible}) => {
     console.log(data)
   }
 
+
   return (
     <Animated.View entering={FadeIn} exiting={FadeOut} style={styles({}).alert}>
       <Ionicons 
@@ -70,6 +75,7 @@ const AlertApp = ({visible}) => {
 
       <View style={styles({}).content}>
         <Text style={styles({}).title}>Cadastrar nova agenda</Text>
+      
 
         <ScrollView style={{marginBottom: 40}}>
           <View>
@@ -93,129 +99,39 @@ const AlertApp = ({visible}) => {
             />
           </View>
 
-          <View style={{flexDirection: "row", columnGap: 20}}>
+          <View style={{zIndex: 10, flexDirection: "row", columnGap: 20}}>
             <View style={styles({}).controller}>
-              <Text style={styles({}).text}>Data inicial *</Text>
+              <Text style={styles({}).text}>Data e hora inicio *</Text>
               <Controller
                 control={control}
                 name={'dateStart'}
                 render={({ field: { onChange, value } }) => (
-                  <TextInput 
-                    value={value} 
-                    onChangeText={onChange}
-                    placeholderTextColor={theme.text.text_3}
-                    style={
-                      styles({
-                        error: errors.dateStart?.message
-                      }).input
-                    } 
-                    placeholder={'Data inicial'}
+                  <DatePicker
+                    className={`custom-datepicker custom-datepicker-input ${errors.dateStart?.message ? 'error' : ''}`}
+                    selected={startDate} 
+                    onChange={(date) => {setStartDate(date), onChange(value)}} 
+                    showTimeSelect
+                    startDate={new Date()}
+                    minDate={new Date()}
+                    placeholderText="Data e hora"
                   />
                 )}
               />
             </View>
             <View style={styles({}).controller}>
-              <Text style={styles({}).text}>Hora Inicio *</Text>
-              <Controller
-                control={control}
-                name={'hourStart'}
-                render={({ field: { onChange, value } }) => (
-                  <TextInput 
-                    value={value} 
-                    onChangeText={onChange}
-                    placeholderTextColor={theme.text.text_3}
-                    style={
-                      styles({
-                        error: errors.dateFinal?.message
-                      }).input
-                    } 
-                    placeholder={'Hora Inicio'}
-                  />
-                )}
-              />
-            </View>
-          </View>
-
-          <View style={{flexDirection: "row", columnGap: 20}}>
-            <View style={styles({}).controller}>
-              <Text style={styles({}).text}>Data final *</Text>
+              <Text style={styles({}).text}>Data e hora final *</Text>
               <Controller
                 control={control}
                 name={'dateFinal'}
                 render={({ field: { onChange, value } }) => (
-                  <TextInput 
-                    value={value} 
-                    onChangeText={onChange}
-                    placeholderTextColor={theme.text.text_3}
-                    style={
-                      styles({
-                        error: errors.hourStart?.message
-                      }).input
-                    } 
-                    placeholder={'Data final'}
-                  />
-                )}
-              />
-            </View>
-            <View style={styles({}).controller}>
-              <Text style={styles({}).text}>Hora final *</Text>
-              <Controller
-                control={control}
-                name={'hourFinal'}
-                render={({ field: { onChange, value } }) => (
-                  <TextInput 
-                    value={value} 
-                    onChangeText={onChange}
-                    placeholderTextColor={theme.text.text_3}
-                    style={
-                      styles({
-                        error: errors.hourFinal?.message
-                      }).input
-                    } 
-                    placeholder={'Hora final'}
-                  />
-                )}
-              />
-            </View>
-          </View>
-
-          <View style={{flexDirection: "row", columnGap: 20}}>
-            <View style={styles({}).controller}>
-              <Text style={styles({}).text}>Dia inteiro ?</Text>
-              <Controller
-                control={control}
-                name={'isAllday'}
-                render={({ field: { onChange, value } }) => (
-                  <TextInput 
-                    value={value} 
-                    onChangeText={onChange}
-                    placeholderTextColor={theme.text.text_3}
-                    style={
-                      styles({
-                        error: errors.isAllday?.message
-                      }).input
-                    } 
-                    placeholder={'Dia inteiro'}
-                  />
-                )}
-              />
-            </View>
-            <View style={styles({}).controller}>
-              <Text style={styles({}).text}>Frequencia</Text>
-              <Controller
-                control={control}
-                name={'frequency'}
-                render={({ field: { onChange, value } }) => (
-                  <TextInput 
-                    value={value} 
-                    onChangeText={onChange}
-                    placeholderTextColor={theme.text.text_3}
-                    style={
-                      styles({
-                        error: errors.frequency?.message
-                      }).input
-                    } 
-                    placeholder={'Frequencia'}
+                  <DatePicker
+                    className={`custom-datepicker custom-datepicker-input ${errors.dateFinal?.message ? 'error' : ''}`}
+                    selected={startDate} 
+                    onChange={(date) => {setStartDate(date), onChange(value)}} 
+                    showTimeSelect
+                    startDate={new Date()}
+                    minDate={new Date()}
+                    placeholderText="Data e hora"
                   />
                 )}
               />
@@ -267,24 +183,63 @@ const AlertApp = ({visible}) => {
 
           <View style={{flexDirection: "row", columnGap: 20}}>
             <View style={styles({}).controller}>
+              <Text style={styles({}).text}>Dia inteiro ?</Text>
+              <View style={[styles({}).input, {flexDirection: "row", alignItems: "center"}]}>
+                <Text style={styles({fontSize: 14, fontFamily: theme.fonts.Poppins_400Regular}).text}>{isEnabled ? "Sim" : "Não"}</Text>
+
+                <Switch
+                  trackColor={{false: '#767577', true: theme.base.base_2}}
+                  thumbColor={isEnabled ? '#f5dd4b' : theme.text.text_5}
+                  onValueChange={toggleSwitch}
+                  value={isEnabled}
+                  style={{
+                    position: "absolute",
+                    right: 10
+                  }}
+                />
+              </View>
+            </View>
+            <View style={styles({}).controller}>
+              <Text style={styles({}).text}>Frequencia</Text>
+              <View style={{width: "100%", height: 40, borderRadius: 8, flexDirection: "row", columnGap: 10}}>
+                {
+                  FREQUENCY.map((item, index) => {
+                    return(
+                      <TouchableOpacity
+                        onPress={() => setFrequencyIndex(index)}
+                        style={[styles({}).selectFrequency,
+                          {borderWidth: frequencyIndex === index ? 3 : undefined}
+                        ]}
+                      >
+                        <Text style={styles({fontSize: 14, fontFamily: theme.fonts.Poppins_400Regular}).text}>{item}</Text>
+                      </TouchableOpacity>
+                    )
+                  })
+                }
+              </View>
+            </View>
+          </View>
+
+          <View style={{flexDirection: "row", columnGap: 20}}>
+            <View style={styles({}).controller}>
               <Text style={styles({}).text}>Cor</Text>
-              <Controller
-                control={control}
-                name={'cor'}
-                render={({ field: { onChange, value } }) => (
-                  <TextInput 
-                    value={value} 
-                    onChangeText={onChange}
-                    placeholderTextColor={theme.text.text_3}
-                    style={
-                      styles({
-                        error: errors.cor?.message
-                      }).input
-                    } 
-                    placeholder={'Cor'}
-                  />
-                )}
-              />
+              <View style={{width: "100%", height: 40, borderRadius: 8}}>
+                <ScrollView horizontal>
+                  {DATACOLOR.map((item, index) => (
+                    <Pressable
+                      key={index}
+                      onPress={() => setColorIndex(index)}
+                      style={[styles({}).select, {backgroundColor: item.item, borderWidth: colorIndex === index ? 3 : undefined}]}
+                    >
+                      {colorIndex === index && <Ionicons 
+                        name={"checkmark-sharp"}
+                        size={20} 
+                        color={theme.text.text_5}
+                      />}
+                    </Pressable>
+                  ))}
+                </ScrollView>
+              </View>
             </View>
             <View style={styles({}).controller}>
               <Text style={styles({}).text}>Notas</Text>
@@ -320,9 +275,12 @@ export default AlertApp;
 
 export interface IStylesheetInterface {
   error?: string
+  fontSize?: number
+  fontColor?: string
+  fontFamily?: string
 }
 
-const styles = ({error}: IStylesheetInterface) =>
+const styles = ({error, fontColor, fontFamily, fontSize}: IStylesheetInterface) =>
   StyleSheet.create({
     alert: {
       width: "100%",
@@ -332,6 +290,23 @@ const styles = ({error}: IStylesheetInterface) =>
       justifyContent: "center",
       alignItems: "center",
       zIndex: 40
+    },
+    selectFrequency: {
+      flex: 1,
+      backgroundColor: theme.base.base_5,
+      alignItems: "center",
+      justifyContent: "center",
+      borderRadius: 8,
+      paddingHorizontal: 10
+    },
+    select: {
+      width: 29,
+      height: "100%",
+      borderColor: theme.text.text_4,
+      borderRadius: 8,
+      alignItems: "center",
+      justifyContent: "center",
+      marginRight: 4
     },
     content: {
       width: responsiveWidth(70),
@@ -345,10 +320,10 @@ const styles = ({error}: IStylesheetInterface) =>
       right: 40
     },
     text: {
-      fontFamily: theme.fonts.Poppins_700Bold,
-      fontSize: 18,
-      color: theme.text.text_4,
-      marginVertical: 10
+      marginVertical: 10,
+      color: fontColor ? fontColor : theme.text.text_4,
+      fontSize: fontSize ? fontSize : 18,
+      fontFamily: fontFamily ? fontFamily : theme.fonts.Poppins_700Bold
     },
     title: {
       fontFamily: theme.fonts.Poppins_700Bold,
@@ -374,4 +349,4 @@ const styles = ({error}: IStylesheetInterface) =>
     controller: {
       flex: 1
     }
-  });
+});

@@ -1,4 +1,5 @@
-import { IDATAWELCOME } from '../@Types'
+import theme from '../../Global/theme'
+import { IDATACOLOR, IDATAWELCOME } from '../@Types'
 import Image1 from '../Assets/image1.png'
 import Image2 from '../Assets/image2.png'
 import Image3 from '../Assets/image3.png'
@@ -5575,4 +5576,34 @@ export const yearData = [
   ["Aaron", 390],
   ["Margareth", 421],
   ["Miranda", 331],
+]
+
+export const DATACOLOR: IDATACOLOR[] = [
+  {item: theme.colorFolders.color_1},
+  {item: theme.colorFolders.color_2},
+  {item: theme.colorFolders.color_3},
+  {item: theme.colorFolders.color_4},
+  {item: theme.colorFolders.color_5},
+  {item: theme.colorFolders.color_6},
+  {item: theme.colorFolders.color_7},
+  {item: theme.colorFolders.color_8},
+  {item: theme.colorFolders.color_9},
+  {item: theme.colorFolders.color_10},
+  {item: theme.colorFolders.color_11},
+  {item: theme.colorFolders.color_12},
+  {item: theme.colorFolders.color_13},
+  {item: theme.colorFolders.color_14},
+  {item: theme.colorFolders.color_15},
+  {item: theme.colorFolders.color_16},
+  {item: theme.colorFolders.color_17},
+  {item: theme.colorFolders.color_20},
+  {item: theme.colorFolders.color_21}
+]
+
+export const FREQUENCY = [
+  'Não se repete',
+  "Diário",
+  "Semanal",
+  "Mensal",
+  "Anual"
 ]
