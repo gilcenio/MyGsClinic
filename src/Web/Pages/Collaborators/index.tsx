@@ -8,6 +8,9 @@ import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import ButtonApp from '../../Components/ButtonApp';
+import Avatar from '../../Assets/avatar.png'
+import { SEX } from '../../Consts';
+import { Ionicons } from '@expo/vector-icons';
 
 interface IData{
   sex: string
@@ -42,7 +45,7 @@ const validationSchema = yup.object().shape({
 export default function Collaborators() {
   const [image, setImage] = useState(null);
   const [isLoading, setIsLoading] = useState(false)
-  const [isSelected, setIsSelected] = useState(false)
+  const [isSelected, setIsSelected] = useState<any>(undefined)
   const { control, handleSubmit, watch, formState: { errors }} = useForm({resolver: yupResolver(validationSchema),});
   const watchAllFields = watch()
 
@@ -79,7 +82,7 @@ export default function Collaborators() {
         <Text style={styles({
           fontFamily: theme.fonts.Poppins_700Bold,
           fontSize: 24,
-          color: theme.text.text_4,}).text}
+          color: theme.text.text_4}).text}
         >
           Cadastrar colaborador
         </Text>
@@ -88,17 +91,19 @@ export default function Collaborators() {
 
           <View style={{flexDirection: "row", columnGap: 20, alignItems: "center"}}>
             <View style={[styles({}).controller, {flexDirection: "row", columnGap: 40}]}>
-
-              <TouchableOpacity style={{flexDirection: "row", alignItems: "center", columnGap: 10}}>
-                <View style={styles({}).select}/>
-                <Text style={styles({}).title}>Feminino</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={{flexDirection: "row", alignItems: "center", columnGap: 10}}>
-                <View style={styles({}).select}/>
-                <Text style={styles({}).title}>Masculino</Text>
-              </TouchableOpacity>
-
+              {
+                SEX.map((item, index) => {
+                  return(
+                    <TouchableOpacity 
+                      onPress={() => setIsSelected(index)}
+                      style={{flexDirection: "row", alignItems: "center", columnGap: 10}}
+                    >
+                      <View style={[styles({}).select, {backgroundColor: isSelected === index ? theme.base.base_2 : undefined }]}/>
+                      <Text style={styles({}).title}>{item}</Text>
+                    </TouchableOpacity>
+                  )
+                })
+              }
             </View>
             <View style={styles({}).controller}>
               <ButtonApp onPress={() => pickAndResizeImage()} title='Selecionar uma foto' iconName={'camera'} bg={theme.base.base_2}/>
@@ -325,9 +330,16 @@ export default function Collaborators() {
       </View>
       
       <View style={styles({}).box2}>
-        <Image source={{ uri: `data:image/jpeg;base64,${image}`  }} style={styles({}).image} />
+        {isSelected != undefined && <Ionicons 
+          name={isSelected === 0 ? "male" : "female"}
+          size={30} 
+          color={theme.text.text_4}
+          style={{position: "absolute", top: 10, right: 10}}
+        /> }
 
-        <View>
+        <Image source={!image ? Avatar : { uri: `data:image/jpeg;base64,${image}`}} style={styles({}).image}/>
+
+        <View style={{width: "100%"}}>
           <Text style={
             styles({
               fontFamily: theme.fonts.Poppins_700Bold,
@@ -345,6 +357,78 @@ export default function Collaborators() {
             }).text}
           >
             {watchAllFields.advice}
+          </Text>
+          <Text style={
+            styles({
+              fontFamily: theme.fonts.Poppins_400Regular,
+              fontSize: 16,
+              color: theme.text.text_2
+            }).text}
+          >
+            {watchAllFields.ufAdvice}
+          </Text>
+          <Text style={
+            styles({
+              fontFamily: theme.fonts.Poppins_400Regular,
+              fontSize: 16,
+              color: theme.text.text_2
+            }).text}
+          >
+            {watchAllFields.boardNumber}
+          </Text>
+          <Text style={
+            styles({
+              fontFamily: theme.fonts.Poppins_400Regular,
+              fontSize: 16,
+              color: theme.text.text_2
+            }).text}
+          >
+            {watchAllFields.CPF}
+          </Text>
+          <Text style={
+            styles({
+              fontFamily: theme.fonts.Poppins_400Regular,
+              fontSize: 16,
+              color: theme.text.text_2
+            }).text}
+          >
+            {watchAllFields.professionalSubscription}
+          </Text>
+          <Text style={
+            styles({
+              fontFamily: theme.fonts.Poppins_400Regular,
+              fontSize: 16,
+              color: theme.text.text_2
+            }).text}
+          >
+            {watchAllFields.phone}
+          </Text>
+          <Text style={
+            styles({
+              fontFamily: theme.fonts.Poppins_400Regular,
+              fontSize: 16,
+              color: theme.text.text_2
+            }).text}
+          >
+            {watchAllFields.email}
+          </Text>
+          <Text style={
+            styles({
+              fontFamily: theme.fonts.Poppins_400Regular,
+              fontSize: 16,
+              color: theme.text.text_2
+            }).text}
+          >
+            {watchAllFields.funtion}
+          </Text>
+          <Text style={
+            styles({
+              fontFamily: theme.fonts.Poppins_400Regular,
+              fontSize: 16,
+              color: theme.text.text_2
+            }).text}
+          >
+            {watchAllFields.level}
           </Text>
         </View>
 
@@ -364,7 +448,7 @@ const styles = ({fontSize, color, fontFamily, error}: IStylesheetInterface) =>
   StyleSheet.create({
     box2: {
       width: "20%",
-      height: "50%",
+      height: "60%",
       backgroundColor: theme.base.base_8,
       borderRadius: 20,
       shadowColor: '#000',
@@ -382,9 +466,9 @@ const styles = ({fontSize, color, fontFamily, error}: IStylesheetInterface) =>
       rowGap: 10
     },
     image: {
-      width: 150, 
-      height: 150,
-      borderRadius: 200,
+      width: 125, 
+      height: 125,
+      borderRadius: 100,
       borderWidth: 4,
       borderColor: theme.base.base_2
     },
@@ -421,7 +505,6 @@ const styles = ({fontSize, color, fontFamily, error}: IStylesheetInterface) =>
       width: 30,
       height: 30,
       borderRadius: 100,
-      borderWidth: 8,
-      backgroundColor: theme.base.base_5
+      borderWidth: 6
     }
   });

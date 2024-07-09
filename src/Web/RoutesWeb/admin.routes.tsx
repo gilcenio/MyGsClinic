@@ -52,18 +52,18 @@ function AdminRoutes() {
         }} 
       />
       <Drawer.Screen 
-        name="Financeiro" 
-        component={Financial} 
-        options={{
-          headerTitle: () => <HeaderTitle title={"Financeiro"}/>,
-        }} 
-      />
-      <Drawer.Screen 
         name="Pacientes" 
         component={Patients}
         options={{
           headerTitle: () => <HeaderTitle title={"Pacientes"}/>,
         }}  
+      />
+      <Drawer.Screen 
+        name="Financeiro" 
+        component={Financial} 
+        options={{
+          headerTitle: () => <HeaderTitle title={"Financeiro"}/>,
+        }} 
       />
     </Drawer.Navigator>
   );
