@@ -1,11 +1,11 @@
 import { View, Text, ScrollView, Image, TouchableOpacity, StyleSheet, TextInput } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { globalStyles } from '../../_Styles'
 import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import theme from '../../../Global/theme';
-import { dateRegex, mask, SEX } from '../../Consts';
+import { CIVILSTATES, dateRegex, maskCEP, maskCM, maskKG, maskNumber, SELECTCITY, SEX, UFS } from '../../Consts';
 import ButtonApp from '../../Components/ButtonApp';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
@@ -13,6 +13,9 @@ import Avatar from '../../Assets/avatar.png'
 import { Ionicons } from '@expo/vector-icons';
 import MaskInput, { Masks } from 'react-native-mask-input';
 import SelectFormApp from '../../Components/SelectFormApp';
+import axios from 'axios';
+import { useAuth } from '../../Hooks';
+import { handlerRisizeText } from '../../Functions/handlerRisizeText';
 
 interface IData{
   nome: string,
@@ -28,6 +31,7 @@ interface IData{
   nomePai: string,  
   conjugue: string, 
   CPFConjugue: string, 
+  cep: string,
   endereco: string, 
   bairro: string, 
   estado: string, 
@@ -55,7 +59,8 @@ const validationSchema = yup.object().shape({
   nomeMae: yup.string().required('Campo obrigatório'),
   nomePai: yup.string(), 
   conjugue: yup.string(), 
-  CPFConjugue: yup.string(), 
+  CPFConjugue: yup.string(),
+  cep: yup.string().required('Campo obrigatório'),
   endereco: yup.string().required('Campo obrigatório'), 
   bairro: yup.string().required('Campo obrigatório'),
   estado: yup.string().required('Campo obrigatório'),
@@ -70,14 +75,15 @@ const validationSchema = yup.object().shape({
 });
 
 export default function Patients() {
+  const {showToast} = useAuth()
   const [image, setImage] = useState(null);
   const [isLoading, setIsLoading] = useState(false)
   const [isSelected, setIsSelected] = useState<any>(undefined)
-  const { control, handleSubmit, watch, formState: { errors }} = useForm({resolver: yupResolver(validationSchema),});
+  const { control, handleSubmit, setValue, watch, formState: { errors }} = useForm({resolver: yupResolver(validationSchema),});
   const watchAllFields = watch()
 
   async function pickAndResizeImage() {
-    setIsLoading(true)
+    setIsLoading(true);
     let result: ImagePicker.ImagePickerResult = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       aspect: [4, 3],
@@ -85,23 +91,56 @@ export default function Patients() {
       allowsEditing: true,
     });
   
-    if (result && result.assets) {
-      const resizedImage = await ImageManipulator.manipulateAsync(
-        result.assets[0].uri,
-        [{ resize: { width: 100, height: 100 } }],
+    if (result && result.assets && result.assets.length > 0) {
+      const { uri, width, height } = result.assets[0];
+      
+      // Define a largura desejada para a imagem redimensionada
+      const desiredWidth = 100;
+  
+      // Calcule a altura mantendo a proporção original
+      const ratio = width / height;
+      const desiredHeight = desiredWidth / ratio;
+  
+      const resizedImage: any = await ImageManipulator.manipulateAsync(
+        uri,
+        [{ resize: { width: desiredWidth, height: desiredHeight } }],
         { compress: 1, format: ImageManipulator.SaveFormat.JPEG, base64: true }
       );
   
-      setImage(resizedImage.base64)
-
-    }else{
-      setIsLoading(false)
+      setImage(resizedImage.base64);
+    } else {
+      setIsLoading(false);
     }
   }
 
   const onSubmit = (data: any) => {
     console.log(data)
   }
+
+  const fetchAddress = async () => {
+    try {
+      const response = await axios.get(`https://viacep.com.br/ws/${watchAllFields.cep}/json/`);
+      const data = response.data;
+
+      if (data.erro) {
+        showToast('error', 'CEP inválido')
+      } else {
+        setValue('endereco', data.logradouro)
+        setValue('bairro', data.bairro)
+        setValue('estado', data.uf)
+        setValue('cidade', data.localidade)
+      }
+    } catch (err) {
+      showToast('error', 'Falha ao buscar endereço')
+    }
+  }
+ 
+  useEffect(() => {
+    if(watchAllFields.cep !== undefined && watchAllFields.cep.length > 8){
+      fetchAddress()
+    }
+
+  }, [watchAllFields.cep])
 
   return (
     <View style={[globalStyles.content, {flexDirection: "row", columnGap: 20}]}>
@@ -132,7 +171,7 @@ export default function Patients() {
               color: theme.text.text_2
             }).text}
           >
-            {watchAllFields.dataNascimento}
+            {watchAllFields.dataNascimento && `Data de Nascimento: ${watchAllFields.dataNascimento}`}
           </Text>
           <Text style={
             styles({
@@ -141,7 +180,8 @@ export default function Patients() {
               color: theme.text.text_2
             }).text}
           >
-            {watchAllFields.telefone}
+            
+            {watchAllFields.telefone && `Telefone: ${watchAllFields.telefone}`}
           </Text>
           <Text style={
             styles({
@@ -150,7 +190,7 @@ export default function Patients() {
               color: theme.text.text_2
             }).text}
           >
-            {watchAllFields.estadoCivil}
+            {watchAllFields.estadoCivil && `Estado civil: ${watchAllFields.estadoCivil}`}
           </Text>
           <Text style={
             styles({
@@ -159,7 +199,7 @@ export default function Patients() {
               color: theme.text.text_2
             }).text}
           >
-            {watchAllFields.rg}
+            {watchAllFields.rg && `RG: ${watchAllFields.rg}`}
           </Text>
           <Text style={
             styles({
@@ -168,7 +208,7 @@ export default function Patients() {
               color: theme.text.text_2
             }).text}
           >
-            {watchAllFields.cpf}
+            {watchAllFields.cpf && `CEP: ${watchAllFields.cpf}`}
           </Text>
           <Text style={
             styles({
@@ -177,7 +217,7 @@ export default function Patients() {
               color: theme.text.text_2
             }).text}
           >
-            {watchAllFields.UFNascimento}
+            {watchAllFields.UFNascimento && `UF de nascimento: ${watchAllFields.UFNascimento}`}
           </Text>
           <Text style={
             styles({
@@ -186,7 +226,7 @@ export default function Patients() {
               color: theme.text.text_2
             }).text}
           >
-            {watchAllFields.cidadeNascimento}
+            {watchAllFields.cidadeNascimento && `Cidade de nascimento: ${watchAllFields.cidadeNascimento}`}
           </Text>
           <Text style={
             styles({
@@ -195,7 +235,7 @@ export default function Patients() {
               color: theme.text.text_2
             }).text}
           >
-            {watchAllFields.nomeMae}
+            {watchAllFields.nomeMae && `Nomde da mãe: ${watchAllFields.nomeMae}`}
           </Text>
           <Text style={
             styles({
@@ -204,7 +244,7 @@ export default function Patients() {
               color: theme.text.text_2
             }).text}
           >
-            {watchAllFields.nomePai}
+            {watchAllFields.nomePai && `Nomde do pai: ${watchAllFields.nomePai}`}
           </Text>
           <Text style={
             styles({
@@ -213,7 +253,7 @@ export default function Patients() {
               color: theme.text.text_2
             }).text}
           >
-            {watchAllFields.conjugue}
+            {watchAllFields.conjugue && `Conjugue: ${watchAllFields.conjugue}`}
           </Text>
           <Text style={
             styles({
@@ -222,7 +262,7 @@ export default function Patients() {
               color: theme.text.text_2
             }).text}
           >
-            {watchAllFields.CPFConjugue}
+            {watchAllFields.CPFConjugue && `CPF do conjugue: ${watchAllFields.CPFConjugue}`}
           </Text>
           <Text style={
             styles({
@@ -231,7 +271,7 @@ export default function Patients() {
               color: theme.text.text_2
             }).text}
           >
-            {watchAllFields.endereco}
+            {watchAllFields.cep && `CEP: ${watchAllFields.cep}`}
           </Text>
           <Text style={
             styles({
@@ -240,7 +280,7 @@ export default function Patients() {
               color: theme.text.text_2
             }).text}
           >
-            {watchAllFields.bairro}
+            {watchAllFields.endereco && `Endereço: ${watchAllFields.endereco}`}
           </Text>
           <Text style={
             styles({
@@ -249,7 +289,7 @@ export default function Patients() {
               color: theme.text.text_2
             }).text}
           >
-            {watchAllFields.estado}
+            {watchAllFields.bairro && `Bairro: ${watchAllFields.bairro}`}
           </Text>
           <Text style={
             styles({
@@ -258,7 +298,7 @@ export default function Patients() {
               color: theme.text.text_2
             }).text}
           >
-            {watchAllFields.cidade}
+            {watchAllFields.estado && `Estado: ${watchAllFields.estado}`}
           </Text>
           <Text style={
             styles({
@@ -267,7 +307,7 @@ export default function Patients() {
               color: theme.text.text_2
             }).text}
           >
-            {watchAllFields.profissao}
+            {watchAllFields.cidade && `Cidade: ${watchAllFields.cidade}`}
           </Text>
           <Text style={
             styles({
@@ -276,7 +316,7 @@ export default function Patients() {
               color: theme.text.text_2
             }).text}
           >
-            {watchAllFields.email}
+            {watchAllFields.profissao && `Profissão: ${watchAllFields.profissao}`}
           </Text>
           <Text style={
             styles({
@@ -285,7 +325,7 @@ export default function Patients() {
               color: theme.text.text_2
             }).text}
           >
-            {watchAllFields.numeroCartaoSaude}
+            {watchAllFields.email && `E-mail: ${watchAllFields.email}`}
           </Text>
           <Text style={
             styles({
@@ -294,7 +334,7 @@ export default function Patients() {
               color: theme.text.text_2
             }).text}
           >
-            {watchAllFields.nomeSocial}
+            {watchAllFields.numeroCartaoSaude && `Número cartão de saúde: ${watchAllFields.numeroCartaoSaude}`}
           </Text>
           <Text style={
             styles({
@@ -303,7 +343,7 @@ export default function Patients() {
               color: theme.text.text_2
             }).text}
           >
-            {watchAllFields.peso}
+            {watchAllFields.nomeSocial && `Nome social: ${watchAllFields.nomeSocial}`}
           </Text>
           <Text style={
             styles({
@@ -312,7 +352,7 @@ export default function Patients() {
               color: theme.text.text_2
             }).text}
           >
-            {watchAllFields.altura}
+            {watchAllFields.peso && `Peso: ${watchAllFields.peso}`}
           </Text>
           <Text style={
             styles({
@@ -321,7 +361,16 @@ export default function Patients() {
               color: theme.text.text_2
             }).text}
           >
-            {watchAllFields.observacao}
+            {watchAllFields.altura && `Altura: ${watchAllFields.altura}`}
+          </Text>
+          <Text style={
+            styles({
+              fontFamily: theme.fonts.Poppins_400Regular,
+              fontSize: 16,
+              color: theme.text.text_2
+            }).text}
+          >
+            {watchAllFields.observacao && `Observação: ${handlerRisizeText(watchAllFields.observacao, 50) }`}
           </Text>
         </View>
 
@@ -336,7 +385,7 @@ export default function Patients() {
           Cadastrar Paciente
         </Text>
 
-        <ScrollView style={{paddingTop: 20, paddingBottom: 40, rowGap: 40}}>
+        <ScrollView style={{paddingTop: 20, paddingBottom: 40, rowGap: 40, paddingHorizontal: 10}}>
 
           <View style={{flexDirection: "row", columnGap: 20, alignItems: "center"}}>
             <View style={[styles({}).controller, {flexDirection: "row", columnGap: 40}]}>
@@ -415,7 +464,7 @@ export default function Patients() {
                     mask={Masks.BRL_PHONE}
                     style={
                       styles({
-                        error: errors.dataNascimento?.message
+                        error: errors.telefone?.message
                       }).input
                     } 
                   />
@@ -424,8 +473,8 @@ export default function Patients() {
             </View>
           </View>
 
-          <View style={{flexDirection: "row", columnGap: 20}}>
-            <View style={styles({}).controller}>
+          <View style={{flexDirection: "row", columnGap: 20, zIndex: 10}}>
+            <View style={[styles({}).controller]}>
               <Text style={styles({}).title}>Estado civil *</Text>
               <Controller
                 control={control}
@@ -436,6 +485,7 @@ export default function Patients() {
                     onChange={onChange}
                     error={errors.estadoCivil?.message}
                     placeholder={'Estado civil'}
+                    DATA={CIVILSTATES}
                   />
                 )}
               />
@@ -451,10 +501,10 @@ export default function Patients() {
                     onChangeText={onChange}
                     placeholderTextColor={theme.text.text_3}
                     placeholder={"RG"}
-                    mask={mask}
+                    mask={maskNumber}
                     style={
                       styles({
-                        error: errors.dataNascimento?.message
+                        error: errors.rg?.message
                       }).input
                     } 
                   />
@@ -475,7 +525,7 @@ export default function Patients() {
                     mask={Masks.BRL_CPF}
                     style={
                       styles({
-                        error: errors.dataNascimento?.message
+                        error: errors.cpf?.message
                       }).input
                     } 
                   />
@@ -484,23 +534,19 @@ export default function Patients() {
             </View>
           </View>
 
-          <View style={{flexDirection: "row", columnGap: 20}}>
+          <View style={{flexDirection: "row", columnGap: 20, zIndex: 9}}>
             <View style={styles({}).controller}>
               <Text style={styles({}).title}>UF de nascimento *</Text>
               <Controller
                 control={control}
                 name={'UFNascimento'}
                 render={({ field: { onChange, value } }) => (
-                  <TextInput 
+                  <SelectFormApp 
                     value={value} 
-                    onChangeText={onChange}
-                    placeholderTextColor={theme.text.text_3}
-                    style={
-                      styles({
-                        error: errors.UFNascimento?.message
-                      }).input
-                    } 
+                    onChange={onChange}
+                    error={errors.UFNascimento?.message}
                     placeholder={'UF de nascimento'}
+                    DATA={UFS}
                   />
                 )}
               />
@@ -511,16 +557,15 @@ export default function Patients() {
                 control={control}
                 name={'cidadeNascimento'}
                 render={({ field: { onChange, value } }) => (
-                  <TextInput 
+                  <SelectFormApp 
                     value={value} 
-                    onChangeText={onChange}
-                    placeholderTextColor={theme.text.text_3}
-                    style={
-                      styles({
-                        error: errors.cidadeNascimento?.message
-                      }).input
-                    } 
+                    onChange={onChange}
+                    error={errors.cidadeNascimento?.message}
                     placeholder={'Cidade de nascimento'}
+                    type={"city"}
+                    UFNascimento={watchAllFields.UFNascimento}
+                    DATA={SELECTCITY[watchAllFields.UFNascimento]}
+                    message={`Selecione "UF de nascimento" primeiro`}
                   />
                 )}
               />
@@ -602,7 +647,7 @@ export default function Patients() {
                     mask={Masks.BRL_CPF}
                     style={
                       styles({
-                        error: errors.dataNascimento?.message
+                        error: errors.CPFConjugue?.message
                       }).input
                     } 
                   />
@@ -611,7 +656,29 @@ export default function Patients() {
             </View>
           </View>
 
-          <View style={{flexDirection: "row", columnGap: 20}}>
+          <View style={{flexDirection: "row", columnGap: 20, zIndex: 8}}>
+            <View style={styles({}).controller}>
+              <Text style={styles({}).title}>CEP *</Text>
+              <Controller
+                control={control}
+                name={'cep'}
+                render={({ field: { onChange, value } }) => (
+                  <MaskInput
+                    value={value}
+                    onChangeText={onChange}
+                    placeholderTextColor={theme.text.text_3}
+                    placeholder={"CEP"}
+                    mask={maskCEP}
+                    maxLength={10}
+                    style={
+                      styles({
+                        error: errors.cep?.message
+                      }).input
+                    } 
+                  />
+                )}
+              />
+            </View>
             <View style={styles({}).controller}>
               <Text style={styles({}).title}>Endereço *</Text>
               <Controller
@@ -652,45 +719,40 @@ export default function Patients() {
                 )}
               />
             </View>
+          </View>
+
+          <View style={{flexDirection: "row", columnGap: 20, zIndex: 7}}>
             <View style={styles({}).controller}>
               <Text style={styles({}).title}>Estado *</Text>
               <Controller
                 control={control}
                 name={'estado'}
                 render={({ field: { onChange, value } }) => (
-                  <TextInput 
+                  <SelectFormApp 
                     value={value} 
-                    onChangeText={onChange}
-                    placeholderTextColor={theme.text.text_3}
-                    style={
-                      styles({
-                        error: errors.estado?.message
-                      }).input
-                    } 
+                    onChange={onChange}
+                    error={errors.estado?.message}
                     placeholder={'Estado'}
+                    DATA={UFS}
                   />
                 )}
               />
             </View>
-          </View>
-
-          <View style={{flexDirection: "row", columnGap: 20}}>
             <View style={styles({}).controller}>
               <Text style={styles({}).title}>Cidade *</Text>
               <Controller
                 control={control}
                 name={'cidade'}
                 render={({ field: { onChange, value } }) => (
-                  <TextInput 
+                  <SelectFormApp 
                     value={value} 
-                    onChangeText={onChange}
-                    placeholderTextColor={theme.text.text_3}
-                    style={
-                      styles({
-                        error: errors.cidade?.message
-                      }).input
-                    } 
+                    onChange={onChange}
+                    error={errors.cidade?.message}
                     placeholder={'Cidade'}
+                    type={"city"}
+                    UFNascimento={watchAllFields.estado}
+                    DATA={SELECTCITY[watchAllFields.estado]}
+                    message={`Selecione "Estado" primeiro`}
                   />
                 )}
               />
@@ -715,6 +777,9 @@ export default function Patients() {
                 )}
               />
             </View>
+          </View>
+
+          <View style={{flexDirection: "row", columnGap: 20}}>
             <View style={styles({}).controller}>
               <Text style={styles({}).title}>E-mail</Text>
               <Controller
@@ -735,9 +800,6 @@ export default function Patients() {
                 )}
               />
             </View>
-          </View>
-
-          <View style={{flexDirection: "row", columnGap: 20}}>
             <View style={styles({}).controller}>
               <Text style={styles({}).title}>Numero do cartão de saude</Text>
               <Controller
@@ -778,45 +840,47 @@ export default function Patients() {
                 )}
               />
             </View>
+          </View>
+
+          <View style={{flexDirection: "row", columnGap: 20}}>
             <View style={styles({}).controller}>
               <Text style={styles({}).title}>Peso</Text>
               <Controller
                 control={control}
                 name={'peso'}
                 render={({ field: { onChange, value } }) => (
-                  <TextInput 
-                    value={value} 
+                  <MaskInput
+                    value={value}
                     onChangeText={onChange}
                     placeholderTextColor={theme.text.text_3}
+                    placeholder={"Peso"}
+                    mask={maskNumber}
                     style={
                       styles({
                         error: errors.peso?.message
                       }).input
                     } 
-                    placeholder={'Peso'}
                   />
                 )}
               />
             </View>
-          </View>
-
-          <View style={{flexDirection: "row", columnGap: 20}}>
             <View style={styles({}).controller}>
               <Text style={styles({}).title}>Altura em centimetros</Text>
               <Controller
                 control={control}
                 name={'altura'}
                 render={({ field: { onChange, value } }) => (
-                  <TextInput 
-                    value={value} 
+                  <MaskInput
+                    value={value}
                     onChangeText={onChange}
                     placeholderTextColor={theme.text.text_3}
+                    placeholder={"Altura em centimetros"}
+                    mask={maskCM}
                     style={
                       styles({
                         error: errors.altura?.message
                       }).input
                     } 
-                    placeholder={'Altura em centimetros'}
                   />
                 )}
               />

@@ -9,8 +9,10 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import ButtonApp from '../../Components/ButtonApp';
 import Avatar from '../../Assets/avatar.png'
-import { SEX } from '../../Consts';
+import { SEX, UFS } from '../../Consts';
 import { Ionicons } from '@expo/vector-icons';
+import SelectFormApp from '../../Components/SelectFormApp';
+import MaskInput, { Masks } from 'react-native-mask-input';
 
 interface IData{
   sex: string
@@ -50,7 +52,7 @@ export default function Collaborators() {
   const watchAllFields = watch()
 
   async function pickAndResizeImage() {
-    setIsLoading(true)
+    setIsLoading(true);
     let result: ImagePicker.ImagePickerResult = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       aspect: [4, 3],
@@ -58,17 +60,25 @@ export default function Collaborators() {
       allowsEditing: true,
     });
   
-    if (result && result.assets) {
-      const resizedImage = await ImageManipulator.manipulateAsync(
-        result.assets[0].uri,
-        [{ resize: { width: 100, height: 100 } }],
+    if (result && result.assets && result.assets.length > 0) {
+      const { uri, width, height } = result.assets[0];
+      
+      // Define a largura desejada para a imagem redimensionada
+      const desiredWidth = 100;
+  
+      // Calcule a altura mantendo a proporção original
+      const ratio = width / height;
+      const desiredHeight = desiredWidth / ratio;
+  
+      const resizedImage: any = await ImageManipulator.manipulateAsync(
+        uri,
+        [{ resize: { width: desiredWidth, height: desiredHeight } }],
         { compress: 1, format: ImageManipulator.SaveFormat.JPEG, base64: true }
       );
   
-      setImage(resizedImage.base64)
-
-    }else{
-      setIsLoading(false)
+      setImage(resizedImage.base64);
+    } else {
+      setIsLoading(false);
     }
   }
 
@@ -87,7 +97,7 @@ export default function Collaborators() {
           Cadastrar colaborador
         </Text>
 
-        <ScrollView style={{marginTop: 20, rowGap: 40}}>
+        <ScrollView style={{marginTop: 20, rowGap: 40, paddingHorizontal: 10}}>
 
           <View style={{flexDirection: "row", columnGap: 20, alignItems: "center"}}>
             <View style={[styles({}).controller, {flexDirection: "row", columnGap: 40}]}>
@@ -99,7 +109,7 @@ export default function Collaborators() {
                       style={{flexDirection: "row", alignItems: "center", columnGap: 10}}
                     >
                       <View style={[styles({}).select, {backgroundColor: isSelected === index ? theme.base.base_2 : undefined }]}/>
-                      <Text style={styles({}).title}>{item}</Text>
+                      <Text style={styles({}).title}>{item+" *"}</Text>
                     </TouchableOpacity>
                   )
                 })
@@ -131,7 +141,7 @@ export default function Collaborators() {
             />
           </View>
 
-          <View style={{flexDirection: "row", columnGap: 20}}>
+          <View style={{flexDirection: "row", columnGap: 20, zIndex: 10}}>
             <View style={styles({}).controller}>
               <Text style={styles({}).title}>Conselho *</Text>
               <Controller
@@ -158,16 +168,12 @@ export default function Collaborators() {
                 control={control}
                 name={'ufAdvice'}
                 render={({ field: { onChange, value } }) => (
-                  <TextInput 
+                  <SelectFormApp 
                     value={value} 
-                    onChangeText={onChange}
-                    placeholderTextColor={theme.text.text_3}
-                    style={
-                      styles({
-                        error: errors.ufAdvice?.message
-                      }).input
-                    } 
+                    onChange={onChange}
+                    error={errors.ufAdvice?.message}
                     placeholder={'UF do conselho'}
+                    DATA={UFS}
                   />
                 )}
               />
@@ -201,16 +207,17 @@ export default function Collaborators() {
                 control={control}
                 name={'CPF'}
                 render={({ field: { onChange, value } }) => (
-                  <TextInput 
-                    value={value} 
+                  <MaskInput
+                    value={value}
                     onChangeText={onChange}
                     placeholderTextColor={theme.text.text_3}
+                    placeholder={"CPF"}
+                    mask={Masks.BRL_CPF}
                     style={
                       styles({
                         error: errors.CPF?.message
                       }).input
                     } 
-                    placeholder={'CPF'}
                   />
                 )}
               />
@@ -244,16 +251,17 @@ export default function Collaborators() {
                 control={control}
                 name={'phone'}
                 render={({ field: { onChange, value } }) => (
-                  <TextInput 
-                    value={value} 
+                  <MaskInput
+                    value={value}
                     onChangeText={onChange}
                     placeholderTextColor={theme.text.text_3}
+                    placeholder={"Telefone"}
+                    mask={Masks.BRL_PHONE}
                     style={
                       styles({
                         error: errors.phone?.message
                       }).input
                     } 
-                    placeholder={'Telefone'}
                   />
                 )}
               />
@@ -304,7 +312,7 @@ export default function Collaborators() {
           </View>
           
           <View style={styles({}).controller}>
-            <Text style={styles({}).title}>Nivel *</Text>
+            <Text style={styles({}).title}>Nivel de acesso *</Text>
             <Controller
               control={control}
               name={'level'}
@@ -318,7 +326,7 @@ export default function Collaborators() {
                       error: errors.level?.message
                     }).input
                   } 
-                  placeholder={'Nivel'}
+                  placeholder={'Nivel de acesso'}
                 />
               )}
             />
@@ -356,7 +364,7 @@ export default function Collaborators() {
               color: theme.text.text_2
             }).text}
           >
-            {watchAllFields.advice}
+            {watchAllFields.advice && `Conselho: ${watchAllFields.advice}`}
           </Text>
           <Text style={
             styles({
@@ -365,7 +373,7 @@ export default function Collaborators() {
               color: theme.text.text_2
             }).text}
           >
-            {watchAllFields.ufAdvice}
+            {watchAllFields.ufAdvice && `UF do conselho: ${watchAllFields.ufAdvice}`}
           </Text>
           <Text style={
             styles({
@@ -374,7 +382,7 @@ export default function Collaborators() {
               color: theme.text.text_2
             }).text}
           >
-            {watchAllFields.boardNumber}
+            {watchAllFields.boardNumber && `Número do conselho: ${watchAllFields.boardNumber}`}
           </Text>
           <Text style={
             styles({
@@ -383,7 +391,7 @@ export default function Collaborators() {
               color: theme.text.text_2
             }).text}
           >
-            {watchAllFields.CPF}
+            {watchAllFields.CPF && `CPF: ${watchAllFields.CPF}`}
           </Text>
           <Text style={
             styles({
@@ -392,7 +400,7 @@ export default function Collaborators() {
               color: theme.text.text_2
             }).text}
           >
-            {watchAllFields.professionalSubscription}
+            {watchAllFields.professionalSubscription && `Assinatura do profissional: ${watchAllFields.professionalSubscription}`}
           </Text>
           <Text style={
             styles({
@@ -401,7 +409,7 @@ export default function Collaborators() {
               color: theme.text.text_2
             }).text}
           >
-            {watchAllFields.phone}
+            {watchAllFields.phone && `Telefone: ${watchAllFields.phone}`}
           </Text>
           <Text style={
             styles({
@@ -410,7 +418,7 @@ export default function Collaborators() {
               color: theme.text.text_2
             }).text}
           >
-            {watchAllFields.email}
+            {watchAllFields.email && `E-mail: ${watchAllFields.email}`}
           </Text>
           <Text style={
             styles({
@@ -419,7 +427,7 @@ export default function Collaborators() {
               color: theme.text.text_2
             }).text}
           >
-            {watchAllFields.funtion}
+            {watchAllFields.funtion && `Função: ${watchAllFields.funtion}`}
           </Text>
           <Text style={
             styles({
@@ -428,7 +436,7 @@ export default function Collaborators() {
               color: theme.text.text_2
             }).text}
           >
-            {watchAllFields.level}
+            {watchAllFields.level && `Nivel de acesso: ${watchAllFields.level}`}
           </Text>
         </View>
 
@@ -490,7 +498,7 @@ const styles = ({fontSize, color, fontFamily, error}: IStylesheetInterface) =>
       backgroundColor: theme.base.base_5,
       borderRadius: 8,
       paddingLeft: 16,
-      borderWidth: error && 1,
+      borderWidth: error ? 1 : undefined,
       borderColor: theme.status.error,
       fontSize: 14, 
       fontFamily: theme.fonts.Poppins_400Regular,
