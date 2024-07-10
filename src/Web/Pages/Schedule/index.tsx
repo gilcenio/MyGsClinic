@@ -590,7 +590,7 @@ export default function Schedule() {
   };
 
   return (
-    <View style={[globalStyles.content, {flexDirection: "row", columnGap: 20}]}>
+    <View style={[globalStyles({}).content, {flexDirection: "row", columnGap: 20}]}>
             
       <View style={styles.box1}>
         <Calendar

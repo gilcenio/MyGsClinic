@@ -4,7 +4,7 @@ import { globalStyles } from '../../_Styles'
 
 export default function Financial() {
   return (
-    <View style={globalStyles.content}>
+    <View style={globalStyles({}).content}>
       <Text>Financial</Text>
     </View>
   )

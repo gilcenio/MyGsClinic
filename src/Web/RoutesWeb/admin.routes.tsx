@@ -10,6 +10,7 @@ import Patients from '../Pages/Patients';
 import theme from '../../Global/theme';
 import HeaderRight from '../Components/HeaderApp/HeaderRight';
 import HeaderTitle from '../Components/HeaderApp/HeaderTitle';
+import Help from '../Pages/Help';
 
 const Drawer = createDrawerNavigator();
 
@@ -27,6 +28,8 @@ function AdminRoutes() {
         headerStyle:{
           backgroundColor: theme.base.base_8
         },
+        headerShadowVisible: false,
+        headerTintColor: theme.text.text_4,
         headerRight: () => <HeaderRight/>
       }}
     >
@@ -63,6 +66,18 @@ function AdminRoutes() {
         component={Financial} 
         options={{
           headerTitle: () => <HeaderTitle title={"Financeiro"}/>,
+        }} 
+      />
+      <Drawer.Screen 
+        name="Help" 
+        component={Help} 
+        options={{
+          headerStyle:{
+            backgroundColor: theme.help.help_1
+          },
+          headerTintColor: theme.text.text_1,
+          headerRight: () => <HeaderRight color={theme.text.text_1}/>,
+          headerTitle: () => <HeaderTitle title={"Ajuda"} color={theme.text.text_1}/>,
         }} 
       />
     </Drawer.Navigator>

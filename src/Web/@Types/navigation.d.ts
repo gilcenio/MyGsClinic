@@ -8,6 +8,7 @@ export declare global {
       Financial: undefined
       Patients: undefined
       Schedule: undefined
+      Help: undefined
     }
   }
 }

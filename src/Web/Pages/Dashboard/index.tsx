@@ -13,7 +13,7 @@ export default function Dashboard() {
 
   
   return (
-    <View style={[globalStyles.content, styles.content]}>
+    <View style={[globalStyles({}).content, styles.content]}>
 
       <View style={styles.selects}>
         <Text 

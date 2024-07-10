@@ -15,57 +15,55 @@ function DrawerCuston(props: DrawerContentComponentProps) {
       <DrawerContentScrollView>
         <Text style={styles.clinicName}>My Clinic</Text>
 
-        {
-          props.state.routes.map((item, index) => {
-            const focused = props.state.index === index;
-            var nameIcon: any = "grid-outline"
+        {props.state.routes
+        .filter((item) => item.name !== "Help") // Filtra a rota "Help"
+        .map((item, index) => {
+          const focused = props.state.index === index;
+          let nameIcon: any = "grid-outline";
 
-            if(item.name === "Agenda"){
-              nameIcon = "calendar-outline"
-            }else if(item.name === "Colaboradores"){
-              nameIcon = "people-outline"
-            }else if(item.name === "Financeiro"){
-              nameIcon = "receipt-outline"
-            }else if(item.name === "Pacientes"){
-              nameIcon = "person-add-outline"
-            }else{
-              nameIcon = "grid-outline"
-            }
+          if (item.name === "Agenda") {
+            nameIcon = "calendar-outline";
+          } else if (item.name === "Colaboradores") {
+            nameIcon = "people-outline";
+          } else if (item.name === "Financeiro") {
+            nameIcon = "receipt-outline";
+          } else if (item.name === "Pacientes") {
+            nameIcon = "person-add-outline";
+          }
 
-            return(
-              <LinearGradient 
-                colors={focused ? ['#BBF7D0', '#14B8A6'] : [theme.base.base_8, theme.base.base_8]}
-                start={{ x: 0, y: 0 }} 
-                end={{ x: 1, y: 0 }}
-                style={styles.drawerItem}
-              >
-                <DrawerItem
-                  label={() => (
-                    <View style={styles.itemContainer}>
-                      <Ionicons 
-                        name={nameIcon}
-                        size={25} 
-                        color={theme.text.text_4}
-                      /> 
-                      <Text
-                        style={[
-                          styles.drawerLabel,
-                        ]}
-                      >
-                        {item.name}
-                      </Text>
-                    </View>
-                  )}
-                  onPress={() => props.navigation.navigate(item.name)}
-                  labelStyle={[
-                    styles.drawerLabel,
-                  ]}
-                />
-              </LinearGradient>
-
-            )
-          })
-        }
+          return (
+            <LinearGradient
+              key={item.key} // Adicione uma chave única para cada item
+              colors={focused ? ['#BBF7D0', '#14B8A6'] : [theme.base.base_8, theme.base.base_8]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.drawerItem}
+            >
+              <DrawerItem
+                label={() => (
+                  <View style={styles.itemContainer}>
+                    <Ionicons
+                      name={nameIcon}
+                      size={25}
+                      color={theme.text.text_4}
+                    />
+                    <Text
+                      style={[
+                        styles.drawerLabel,
+                      ]}
+                    >
+                      {item.name}
+                    </Text>
+                  </View>
+                )}
+                onPress={() => props.navigation.navigate(item.name)}
+                labelStyle={[
+                  styles.drawerLabel,
+                ]}
+              />
+            </LinearGradient>
+          );
+        })}
 
       </DrawerContentScrollView>
 
@@ -106,7 +104,7 @@ function DrawerCuston(props: DrawerContentComponentProps) {
               </Text>
             </View>
           )}
-          onPress={() => alert('Link para Ajuda')}
+          onPress={() => props.navigation.navigate("Help")}
         />
         <DrawerItem
           label={() => (

@@ -4,14 +4,15 @@ import theme from '../../../../Global/theme'
 
 interface IHeaderTitle{
   title: string
+  color?: string
 }
 
-export default function HeaderTitle({title}: IHeaderTitle) {
+export default function HeaderTitle({title, color}: IHeaderTitle) {
 
   return (
       <Text 
         style={{
-          color: theme.text.text_6, 
+          color: color ? color : theme.text.text_6, 
           fontSize: 28, 
           fontFamily: theme.fonts.Poppins_600SemiBold
         }}

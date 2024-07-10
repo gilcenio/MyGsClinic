@@ -207,7 +207,7 @@ const styles = ({fontSize, fontColor, fontFamily, error}: StylesheetInterface) =
       backgroundColor: theme.base.base_3,
       borderRadius: 8,
       paddingLeft: 16,
-      borderWidth: error && 1,
+      borderWidth: error ? 1 : undefined,
       borderColor: theme.status.error,
       fontSize: 14, 
       fontFamily: theme.fonts.Poppins_400Regular

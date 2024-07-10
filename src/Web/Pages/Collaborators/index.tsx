@@ -87,7 +87,7 @@ export default function Collaborators() {
   }
 
   return (
-    <View style={[globalStyles.content, {flexDirection: "row", columnGap: 20}]}>
+    <View style={[globalStyles({}).content, {flexDirection: "row", columnGap: 20}]}>
       <View style={styles({}).box1}>
         <Text style={styles({
           fontFamily: theme.fonts.Poppins_700Bold,

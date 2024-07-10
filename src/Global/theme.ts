@@ -70,6 +70,9 @@ export default {
     color_37: "#C89BE3",
     color_38: "#D0D400"
   },
+  help: {
+    help_1: '#0A070B'
+  },
   fonts:{
     Poppins_100Thin: 'Poppins_100Thin',
     Poppins_200ExtraLight: 'Poppins_200ExtraLight',

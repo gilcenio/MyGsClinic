@@ -143,7 +143,7 @@ export default function Patients() {
   }, [watchAllFields.cep])
 
   return (
-    <View style={[globalStyles.content, {flexDirection: "row", columnGap: 20}]}>
+    <View style={[globalStyles({}).content, {flexDirection: "row", columnGap: 20}]}>
       <View style={styles({}).box2}>
         {isSelected != undefined && <Ionicons 
           name={isSelected === 0 ? "male" : "female"}
