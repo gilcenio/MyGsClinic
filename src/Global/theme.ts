@@ -9,7 +9,7 @@ export default {
     base_7: '#D0D5DD',
     base_8: '#E5FCED',
     base_9: '#7DD3FC'
-  },
+  }, 
   text: {
     text_1: '#14B8A6',
     text_2: '#667085',
