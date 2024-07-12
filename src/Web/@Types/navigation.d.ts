@@ -9,6 +9,7 @@ export declare global {
       Patients: undefined
       Schedule: undefined
       Help: undefined
+      ViewCollaborators: undefined
     }
   }
 }

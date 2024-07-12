@@ -21,18 +21,22 @@ import {
   SectionListProps,
   SectionList,
   ScrollView,
-  ScrollViewProps
+  ScrollViewProps,
+  useWindowDimensions
 } from 'react-native'
 import Animated, { AnimatedStyleProp, BaseAnimationBuilder, FadeIn, FadeOut, LayoutAnimationFunction } from 'react-native-reanimated';
-import { IconProps, IconWeight } from '../@IconOneLib';
-import theme from '../../Global/Styles/theme';
-import { responsiveHeight, responsiveWidth } from '../Utils/responsive';
+import theme from '../Global/theme';
+const {height, width, scale, fontScale} = useWindowDimensions()
+
+function responsiveWidth(value: number){
+  return width * (value / 100)
+}
+
+function responsiveHeight(value: number){
+  return height * (value / 100)
+}
 
 const PLATFORMAPP = Platform.OS
-
-const applyResponsiveValue = (value: undefined | string | number, responsiveFunction: (value: number | string) => number): number | undefined => {
-  return value !== undefined ? responsiveFunction(value) : undefined;
-};
 
 type ITACKAPP = ViewStyle & ViewProps & {
   children: React.ReactNode;
@@ -624,7 +628,7 @@ export function TEXTAPP({
   label, 
   fontSize = 4, 
   fontFamily = 'Ubuntu_500Medium', 
-  color = theme.shade.shade_2, 
+  color = theme.text.text_4, 
 
   top,
   left,
@@ -693,7 +697,7 @@ export function TEXTAPP({
 
 //------------------------------------------------------------------------------------------------------------------
 
-export type IPRESSABLEAPP = TouchableOpacityProps & ViewStyle & {
+export type IPRESSABLEAPP = TouchableOpacityProps & ViewStyle & ViewProps & {
   activeOpacity?: number;
   children?: ReactNode;
 
@@ -853,31 +857,6 @@ export function IMAGEBACKGROUNDAPP({...res}: IIMAGEBACKGROUNDAPP ) {
 
 //------------------------------------------------------------------------------------------------------------------
 
-type IICONAPP = TouchableOpacityProps & ViewStyle & {
-  Icon({ weight, color, size, style, mirrored }: IconProps): JSX.Element
-  size?: number
-  weight?: IconWeight | undefined
-  color?: string
-}
-
-export function ICONAPP({Icon, size, weight, color, ...res}: IICONAPP ) {
-
-  return (
-    <PRESSABLEAPP 
-      {...res}
-      style={{...res}}
-    >
-      <Icon 
-        color={color ? color : theme.shade.shade_5} 
-        weight={weight ? weight : "bold"} 
-        size={size ? size : 24}
-      />
-    </PRESSABLEAPP>
-  );
-}
-
-//------------------------------------------------------------------------------------------------------------------
-
 type IINPUTAPP = TextInputProps & ViewStyle & {
   fontSize?: number
   fontFamily?: 'Ubuntu_300Light' | 'Ubuntu_400Regular' | 'Ubuntu_500Medium' | 'Ubuntu_700Bold',
@@ -892,7 +871,7 @@ type IINPUTAPP = TextInputProps & ViewStyle & {
   errorPosition?: 'top' | 'bottom'
 }
 
-export function INPUTAPP({errorPosition = "bottom", flex= 0, height= undefined, fontSize = 3.5, fontFamily = 'Ubuntu_500Medium', backgroundColor= theme.shade.shade_10, color= theme.shade.shade_2, style, InputLeftElement, InputRightElement, error = false, message, ...res}: IINPUTAPP ) {
+export function INPUTAPP({errorPosition = "bottom", flex= 0, height= undefined, fontSize = 3.5, fontFamily = 'Ubuntu_500Medium', backgroundColor= theme.base.base_1, color= theme.base.base_1, style, InputLeftElement, InputRightElement, error = false, message, ...res}: IINPUTAPP ) {
 
   const applyResponsiveWidth = (value: undefined | string | number) => applyResponsiveValue(value, responsiveWidth);
   const applyResponsiveHeight = (value: undefined | string | number) => applyResponsiveValue(value, responsiveHeight);
@@ -908,7 +887,7 @@ export function INPUTAPP({errorPosition = "bottom", flex= 0, height= undefined, 
             style={{
               fontFamily: 'Ubuntu_300Light',
               fontSize: applyResponsiveWidth(3),
-              color: theme.error.error_1,
+              color: theme.text.text_4,
             }}
           >
             {message}
@@ -931,8 +910,7 @@ export function INPUTAPP({errorPosition = "bottom", flex= 0, height= undefined, 
         </View>
         <TextInput
           {...res}
-          autoCapitalize={'none'}
-          placeholderTextColor={theme.shade.shade_6}
+          placeholderTextColor={theme.text.text_4}
           style={[
             {
               flex: 1,
@@ -961,7 +939,7 @@ export function INPUTAPP({errorPosition = "bottom", flex= 0, height= undefined, 
             style={{
               fontFamily: 'Ubuntu_300Light',
               fontSize: applyResponsiveWidth(3),
-              color: theme.error.error_1,
+              color: theme.text.text_4,
             }}
           >
             {message}
@@ -990,6 +968,7 @@ type IINPUTFORMAPP = TextInputProps & ViewStyle & {
   widthContainer?: number | string
   flexContainer?: number
   error?: string | undefined
+  message?: string
 }
 
 export function INPUTFORMAPP({label,
@@ -997,7 +976,7 @@ export function INPUTFORMAPP({label,
   LabelFontFamily = 'Ubuntu_500Medium', 
   widthContainer,
   flexContainer,
-  LabelColor = theme.shade.shade_2,  fontSize = 3.5, height = undefined, fontFamily = 'Ubuntu_500Medium', backgroundColor= theme.shade.shade_10, color= theme.shade.shade_2, maxHeight, style, error, ...res}: IINPUTFORMAPP ) {
+  LabelColor = theme.text.text_4,  fontSize = 3.5, height = undefined, fontFamily = 'Ubuntu_500Medium', backgroundColor= theme.text.text_4, color= theme.text.text_4, maxHeight, style, error, message, ...res}: IINPUTFORMAPP ) {
 
   const applyResponsiveWidth = (value: undefined | string | number) => applyResponsiveValue(value, responsiveWidth);
   const applyResponsiveHeight = (value: undefined | string | number) => applyResponsiveValue(value, responsiveHeight);
@@ -1019,8 +998,8 @@ export function INPUTFORMAPP({label,
       <TextInput
         {...res}
         multiline={maxHeight ? true : undefined}
-        placeholderTextColor={theme.shade.shade_4}
-        autoCapitalize={'none'}
+        placeholderTextColor={theme.text.text_4}
+        autoCapitalize={"sentences"}
         style={[
           {
             backgroundColor,
@@ -1032,12 +1011,28 @@ export function INPUTFORMAPP({label,
             height: applyResponsiveHeight(height),
             paddingHorizontal: applyResponsiveWidth(2.5),
             paddingVertical: applyResponsiveHeight(PLATFORMAPP === 'ios' ? 1.3 : 0.70),
-            borderColor: theme.error.error_1,
+            borderColor: theme.text.text_4,
             borderWidth: error ? 1 : undefined
           },
           style
         ]}
       />
+      {error && message &&
+        <BOXANIMATEDAPP
+          animationEntering={FadeIn}
+          animationExiting={FadeOut.duration(10)}
+        >
+          <Text
+            style={{
+              fontFamily: 'Ubuntu_300Light',
+              fontSize: applyResponsiveWidth(3),
+              color: theme.text.text_4,
+            }}
+          >
+            {message}
+          </Text>
+        </BOXANIMATEDAPP>
+      }
     </View>
   );
 }
@@ -1050,7 +1045,7 @@ type IPROGRESSAPP = ViewStyle & {
   progressColor?: string 
 }
 
-export function PROGRESSAPP({progress, backgroundColor = theme.shade.shade_10, progressColor = theme.base.base_2, ...res}: IPROGRESSAPP ) {
+export function PROGRESSAPP({progress, backgroundColor = theme.text.text_4, progressColor = theme.base.base_2, ...res}: IPROGRESSAPP ) {
 
   return (
     <View {...res} 
@@ -1722,3 +1717,5 @@ export function HSTACKANIMATEDAPP({
     </HSTackAnimated>
   )
 }
+
+//------------------------------------------------------------------------------------------------------------------

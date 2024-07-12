@@ -3,6 +3,8 @@ import React, { useState } from 'react'
 import { Ionicons } from '@expo/vector-icons';
 import theme from '../../../../Global/theme';
 import { useAuth } from '../../../Hooks';
+import useResponsive from '../../../../Context/useResponsive';
+import TextApp from '../../TextApp';
 
 interface IHeaderRight{
   color?: string
@@ -10,56 +12,33 @@ interface IHeaderRight{
 
 
 export default function HeaderRight({color}: IHeaderRight) {
+  const {scaledWidth} = useResponsive()
   const {user} = useAuth()
-  const [search, setSearch] = useState("")
 
   return (
-    <View style={styles({}).content}>
-      {/* <View style={styles.containerInput}>
-        <Ionicons 
-          name={"search-outline"}
-          size={20} 
-          color={theme.text.text_4}
-          style={{marginLeft: 8}}
-        /> 
-        <TextInput 
-          value={search}
-          onChangeText={setSearch}
-          placeholder='Buscar'
-          style={styles.input}
-          placeholderTextColor={theme.text.text_3}
-        />
-      </View> */}
-
+    <View style={[styles({}).content, {columnGap: scaledWidth(1.5)}]}>
       <View>
         <Ionicons 
           name={"notifications-outline"}
-          size={25} 
+          size={scaledWidth(1.3)} 
           color={color ? color : theme.text.text_4}
         /> 
-        <View style={styles({}).badgeNotify}/>
+        <View style={[styles({}).badgeNotify, {width: scaledWidth(0.5), height: scaledWidth(0.5)}]}/>
       </View>
 
       <TouchableOpacity onPress={() => {}} style={styles({}).infos}>
         <View>
           <Image 
             source={{uri: "https://static.vecteezy.com/ti/vetor-gratis/p3/2275818-avatar-feminino-mulher-perfil-icone-para-rede-vetor.jpg"}} 
-            style={styles({}).avatar}
+            style={[styles({}).avatar, {width: scaledWidth(2.5), height: scaledWidth(2.5)}]}
           />
-          <View style={styles({}).badge}/>
+          <View style={[styles({}).badge, {width: scaledWidth(0.8), height: scaledWidth(0.8)}]}/>
         </View>
 
         <View>
-          <Text style={[styles({}).text, {fontSize: 16, fontFamily: theme.fonts.Poppins_500Medium, color: color}]}>{user.email}</Text>
-          <Text style={[styles({}).text, {fontSize: 10, fontFamily: theme.fonts.Poppins_400Regular, color: color}]}>{user.userType}</Text>
+          <TextApp fontSize={0.9} title={user.email} color={color} fontFamily={theme.fonts.Poppins_500Medium}/>
+          <TextApp fontSize={0.5} title={user.userType} color={color} fontFamily={theme.fonts.Poppins_400Regular}/>
         </View>
-
-        <Ionicons 
-          name={"chevron-down"}
-          size={20} 
-          color={theme.base.base_2}
-          style={styles({}).arrowIcon}
-        /> 
       </TouchableOpacity>
 
     </View>
@@ -78,7 +57,6 @@ const styles = ({fontSize, color, fontFamily}: IStylesheetInterface) =>
       flexDirection: "row",
       marginRight: 16,
       alignItems: "center",
-      columnGap: 25
     },
     infos: {
       flexDirection: "row",
@@ -91,14 +69,10 @@ const styles = ({fontSize, color, fontFamily}: IStylesheetInterface) =>
       color: color ? color : theme.text.text_2
     },
     avatar: {
-      width: 50, 
-      height: 50, 
       backgroundColor: "red",
       borderRadius: 100
     },
     badge: {
-      width: 15,
-      height: 15,
       borderRadius: 100,
       backgroundColor: theme.base.base_2,
       position: "absolute",
@@ -108,8 +82,6 @@ const styles = ({fontSize, color, fontFamily}: IStylesheetInterface) =>
       borderColor: theme.base.base_8
     },
     badgeNotify: {
-      width: 10,
-      height: 10,
       borderRadius: 100,
       backgroundColor: theme.status.error,
       position: "absolute",

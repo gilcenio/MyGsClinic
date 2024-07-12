@@ -1,17 +1,17 @@
 import { View, Text, StyleSheet, Image, Button, ScrollView, TextInput, Pressable, TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
-import { globalStyles } from '../../_Styles'
-import theme from '../../../Global/theme'
+import { globalStyles } from '../../../_Styles'
+import theme from '../../../../Global/theme'
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import ButtonApp from '../../Components/ButtonApp';
-import Avatar from '../../Assets/avatar.png'
-import { SEX, UFS } from '../../Consts';
+import ButtonApp from '../../../Components/ButtonApp';
+import Avatar from '../../../Assets/avatar.png'
+import { SEX, UFS } from '../../../Consts';
 import { Ionicons } from '@expo/vector-icons';
-import SelectFormApp from '../../Components/SelectFormApp';
+import SelectFormApp from '../../../Components/SelectFormApp';
 import MaskInput, { Masks } from 'react-native-mask-input';
 
 interface IData{

@@ -4,15 +4,18 @@ import { createDrawerNavigator, DrawerContentComponentProps } from '@react-navig
 import Dashboard from '../Pages/Dashboard';
 import DrawerCuston from '../Components/DrawerCuston';
 import Schedule from '../Pages/Schedule';
-import Collaborators from '../Pages/Collaborators';
 import Financial from '../Pages/Financial';
 import Patients from '../Pages/Patients';
 import theme from '../../Global/theme';
 import HeaderRight from '../Components/HeaderApp/HeaderRight';
 import HeaderTitle from '../Components/HeaderApp/HeaderTitle';
 import Help from '../Pages/Help';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Collaborators from '../Pages/PageCollaborators/Collaborators';
+import ViewCollaborators from '../Pages/PageCollaborators/ViewCollaborators';
 
 const Drawer = createDrawerNavigator();
+const Stack = createNativeStackNavigator();
 
 function AdminRoutes() {
   return (
@@ -48,8 +51,8 @@ function AdminRoutes() {
         }} 
       />
       <Drawer.Screen 
-        name="Colaboradores" 
-        component={Collaborators}
+        name="Collaborators" 
+        component={CollaboratorsStack}
         options={{
           headerTitle: () => <HeaderTitle title={"Colaboradores"}/>,
         }} 
@@ -83,5 +86,28 @@ function AdminRoutes() {
     </Drawer.Navigator>
   );
 }
+
+const CollaboratorsStack = () => (
+  <Stack.Navigator
+    screenOptions={{
+      headerShown: false
+    }}
+  >
+    <Stack.Screen
+      name="ViewCollaborators"
+      component={ViewCollaborators}
+      options={{
+        headerTitle: () => <HeaderTitle title={"Colaboradores"}/>,
+      }} 
+    />
+    <Stack.Screen
+      name="Collaborators"
+      component={Collaborators}
+      options={{
+        headerTitle: () => <HeaderTitle title={"Colaboradores"}/>,
+      }} 
+    />
+  </Stack.Navigator>
+);
 
 export default AdminRoutes;

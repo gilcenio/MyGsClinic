@@ -10,12 +10,9 @@ export default function Dashboard() {
   const {user} = useAuth()
   const [isSelected, setIsSelected] = useState(true)
 
-
-  
   return (
     <View style={[globalStyles({}).content, styles.content]}>
-
-      <View style={styles.selects}>
+      <View style={styles.selects}> 
         <Text 
           onPress={() => setIsSelected(!isSelected)} 
           style={[styles.text, {
@@ -37,7 +34,6 @@ export default function Dashboard() {
             Receita
           </Text>
         }
-
       </View>
 
       { isSelected ?
